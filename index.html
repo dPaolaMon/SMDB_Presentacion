@@ -416,11 +416,12 @@
               <div class="brand-mark"><i data-lucide="database"></i></div>
               <div class="brand-text">CyberCore Tech</div>
             </div>
-            <div class="project-pill">UPIICSA • GRUPO: 5CM5</div>
-          </div>
+            <div class="project-pill">UPIICSA • GRUPO: 5CM50</div>
+          </div>  
           <div class="hero-copy">
             <div class="eyebrow">Sistemas Manejadores de Bases de Datos</div>
             <h1 class="hero-title text-xl md:text-3xl font-bold">Resultados de proyecto de base de datos para CiberTech</h1>
+            <div class="brand-text">Profesor : Francisco Javier Bueno Vasquez </div>
           </div>
         </div>
       </header>
@@ -453,10 +454,25 @@
             <div class="info-card">
               <div class="card-title">Institución</div>
               <div class="card-copy text-sm">UPIICSA - Instituto Politécnico Nacional.</div>
+              <div class="card-copy text-sm">Proyecto Integrador</div>
+              <div class="card-copy text-sm">El proyecto demuestra que el equipo es capaz de: <br>
+                Diseñar una base de datos desde cero. <br>
+                Implementarla en un motor real (SQL Server). <br>
+                Consultarla eficientemente con SQL. <br>
+                Protegerla con mecanismos de seguridad e integridad. <br>
+                Manejar situaciones de concurrencia reales. <br>
+                Todo esto simula un entorno laboral donde un taller necesita gestionar clientes, dispositivos, técnicos, repuestos y órdenes de servicio de manera confiable y segura.</div>
             </div>
             <div class="info-card">
               <div class="card-title">Grupo e Integrantes</div>
-              <div class="card-copy text-sm">Grupo: 5CM5<br>Montes Rangel Diana Paola | Alba Castañeda Antonio Saul</div>
+              <div class="card-copy text-sm">Grupo: 5CM53<br>
+                Montes Rangel Diana Paola  <br>
+                Alba Castañeda Antonio Saul <br> 
+                Avila Rivera Jose Azael <br>
+                Bocardo Suárez Andrea Guadalupe <br>
+                Canchola Sanchez Ilse Alinne <br>
+                Ramirez Illescas Pablo Alberto 
+              </div>
             </div>
             <div class="info-card">
               <div class="card-title">Periodo</div>
@@ -477,6 +493,10 @@
           <div class="note-box">
             El proyecto consiste en una base de datos para un taller de reparación de celulares y dispositivos electrónicos. El sistema permite gestionar establecimientos, clientes, dispositivos, técnicos especialistas, proveedores, repuestos, órdenes de servicio y los detalles de los repuestos utilizados en cada reparación. Se implementaron conceptos de consultas SQL, seguridad, integridad y concurrencia.
           </div>
+          <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+          <img src="img/aql.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+          <span class="img-caption"></span>
+        </div>
         </section>
 
         <section id="sec-3" class="panel">
@@ -498,11 +518,10 @@
             <div class="info-card"><strong>ORDEN_SERVICIO:</strong> <span class="text-xs text-slate-500 block mt-1">Tabla central asociativa de asignación, diagnóstico y estados.</span></div>
             <div class="info-card"><strong>DETALLE_REPUESTOS:</strong> <span class="text-xs text-slate-500 block mt-1">Registra refacciones aplicadas por orden con cálculo de subtotales.</span></div>
           </div>
-          <div class="img-placeholder">
-            <i data-lucide="image"></i>
-            <div>[Espacio para Imagen]</div>
-            <span>ALT: Diagrama E-R en SQL Server</span>
-          </div>
+          <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+            <img src="img/Diagrama ER.jpeg" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+            <span class="img-caption"></span>
+            </div>
         </section>
 
         <section id="sec-4" class="panel">
@@ -546,7 +565,16 @@ CREATE TABLE DISPOSITIVO (
     marca VARCHAR(50),
     modelo VARCHAR(50),
     tipo VARCHAR(50) CHECK (tipo IN ('Smartphone', 'Tablet', 'Smartwatch', 'Dron', 'VR', 'IA'))
-);</code></pre>
+    );
+
+CREATE TABLE PROVEEDOR (
+    id_proveedor INT PRIMARY KEY,
+    empresa VARCHAR(100),
+    contacto_ventas VARCHAR(100),
+    telefono VARCHAR(20)
+);
+
+</code></pre>
               </div>
             </div>
             <div class="code-card">
@@ -554,8 +582,41 @@ CREATE TABLE DISPOSITIVO (
                 <div class="dots"><span></span><span></span><span></span></div>
                 <div class="code-label">Tablas_Dependientes.sql</div>
               </div>
+              <br></br>
               <div class="code-container">
-<pre><code>CREATE TABLE ORDEN_SERVICIO (
+  <pre><code> -- Tablas con dependencias
+CREATE TABLE TECNICO_ESPECIALISTA (
+    id_tecnico INT PRIMARY KEY,
+    id_establecimiento INT,
+    nombre VARCHAR(100),
+    especialidad VARCHAR(100),
+    certificacion VARCHAR(100),
+    FOREIGN KEY (id_establecimiento) REFERENCES ESTABLECIMIENTO(id_establecimiento)
+);
+
+
+CREATE TABLE REPUESTO (
+    id_repuesto INT PRIMARY KEY,
+    id_establecimiento INT,
+    id_proveedor INT,
+    nombre_pieza VARCHAR(100),
+    precio_unitario FLOAT,
+    stock_actual INT,
+    FOREIGN KEY (id_establecimiento) REFERENCES ESTABLECIMIENTO(id_establecimiento),
+    FOREIGN KEY (id_proveedor) REFERENCES PROVEEDOR(id_proveedor)
+);
+
+CREATE TABLE DETALLE_REPUESTOS (
+    id_detalle INT PRIMARY KEY,
+    id_orden INT,
+    id_repuesto INT,
+    cantidad_usada INT,
+    subtotal FLOAT,
+    FOREIGN KEY (id_orden) REFERENCES ORDEN_SERVICIO(id_orden),
+    FOREIGN KEY (id_repuesto) REFERENCES REPUESTO(id_repuesto)
+);
+
+  CREATE TABLE ORDEN_SERVICIO (
     id_orden INT PRIMARY KEY,
     id_establecimiento INT,
     id_cliente INT,
@@ -568,15 +629,15 @@ CREATE TABLE DISPOSITIVO (
     FOREIGN KEY (id_cliente) REFERENCES CLIENTE(id_cliente),
     FOREIGN KEY (num_serie) REFERENCES DISPOSITIVO(num_serie),
     FOREIGN KEY (id_tecnico) REFERENCES TECNICO_ESPECIALISTA(id_tecnico)
-);</code></pre>
+  );
+  </code></pre>
               </div>
             </div>
           </div>
-          <div class="img-placeholder">
-            <i data-lucide="image"></i>
-            <div>[Espacio para Imagen]</div>
-            <span>ALT: Creacion de tablas</span>
-          </div>
+            <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+          <img src="img/BD.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+          <span class="img-caption"></span>
+            </div>
         </section>
 
         <section id="sec-5" class="panel">
@@ -612,10 +673,9 @@ FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_TYPE = 'BASE TABLE';</code></pre>
               </div>
             </div>
-            <div class="img-placeholder mt-0">
-              <i data-lucide="image"></i>
-              <div>[Espacio para Imagen]</div>
-              <span>ALT: Lorem ipsum dolor sit amet</span>
+             <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+          <img src="img/TablasdeDB.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+          <span class="img-caption"></span>
             </div>
           </div>
         </section>
@@ -655,10 +715,9 @@ SELECT 'DETALLE_REPUESTOS', COUNT(*) FROM DETALLE_REPUESTOS;
 GO</code></pre>
               </div>
             </div>
-            <div class="img-placeholder mt-0">
-              <i data-lucide="image"></i>
-              <div>[Espacio para Imagen]</div>
-              <span>ALT: Lorem ipsum dolor sit amet</span>
+          <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+           <img src="img/VerificaciondeRegistros.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+           <span class="img-caption"></span>
             </div>
           </div>
         </section>
@@ -675,7 +734,7 @@ GO</code></pre>
           <div class="grid-2 mb-4">
             <div class="query-card">
               <div class="query-item">
-                <strong>1. Reporte completo de órdenes:</strong> Une 4 tablas base para vincular el identificador de servicio con el cliente real, dispositivo y el técnico responsable. (Retorna 20 filas).
+                <strong>1. Reporte completo de órdenes:</strong> Une 4 tablas base para vincular el identificador de servicio con el cliente real, dispositivo y el técnico responsable. (Retorna 25 filas).
               </div>
               <div class="query-item">
                 <strong>2. Repuestos con stock crítico:</strong> Une piezas y proveedores oficiales aislando registros con stock menor a 10 unidades para automatizar solicitudes de compra. (Retorna 9 filas).
@@ -704,15 +763,31 @@ INNER JOIN TECNICO_ESPECIALISTA t ON o.id_tecnico = t.id_tecnico;
 SELECT r.nombre_pieza, r.stock_actual, p.empresa AS proveedor
 FROM REPUESTO r
 INNER JOIN PROVEEDOR p ON r.id_proveedor = p.id_proveedor
-WHERE r.stock_actual &lt; 10;</code></pre>
+WHERE r.stock_actual &lt; 10; 
+
+-- Técnicos por establecimiento 
+SELECT 
+    t.nombre AS tecnico,
+    t.especialidad,
+    e.nombre_sucursal AS establecimiento
+FROM TECNICO_ESPECIALISTA t
+INNER JOIN ESTABLECIMIENTO e ON t.id_establecimiento = e.id_establecimiento;
+</code></pre>
               </div>
             </div>
           </div>
-          <div class="img-placeholder">
-            <i data-lucide="image"></i>
-            <div>[Espacio para Imagen]</div>
-            <span>ALT: Lorem ipsum dolor sit amet</span>
-          </div>
+          <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+           <img src="img/Multitabla.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+           <span class="img-caption"></span>
+            </div>
+            <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+           <img src="img/stockBajo.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+           <span class="img-caption"></span>
+            </div>
+            <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+           <img src="img/TecnicosporEsp.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+           <span class="img-caption"></span>
+            </div>
         </section>
 
         <section id="sec-8" class="panel">
@@ -753,20 +828,18 @@ GO</code></pre>
               </div>
             </div>
             <div class="flex flex-col gap-4">
-              <div class="img-placeholder mt-0 py-4">
-                <i data-lucide="image"></i>
-                <div>[Espacio para Imagen]</div>
-                <span>ALT: Lorem ipsum dolor sit amet</span>
-              </div>
+             <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+           <img src="img/VistaSegura.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+           <span class="img-caption"></span>
+            </div>
               <div class="bg-slate-900 text-red-400 p-3 rounded-lg font-mono text-xs">
                 -- Inserción de prueba con error inducido<br>
                 INSERT INTO ORDEN_SERVICIO VALUES (99, 1, 1, 'SN001', 1, '2026-01-01', ...);
               </div>
-              <div class="img-placeholder mt-0 py-4">
-                <i data-lucide="image"></i>
-                <div>[Espacio para Imagen]</div>
-                <span>ALT: Lorem ipsum dolor sit amet</span>
-              </div>
+              <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+           <img src="img/PruebaTrigger.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+           <span class="img-caption"></span>
+            </div>
             </div>
           </div>
         </section>
@@ -776,7 +849,7 @@ GO</code></pre>
             <div>
               <div class="section-kicker">Sección 09</div>
               <h2 class="section-title">Concurrencia y Técnicas de Bloqueo</h2>
-              <p class="section-desc">Gestión transaccional explícita para evitar lecturas sucias y asegurar actualizaciones atómicas en el inventario.</p>
+              <p class="section-desc">Gestión transaccional explícita para evitar lecturas sesgadas y asegurar actualizaciones  en el inventario.</p>
             </div>
             <div class="section-badge">Transaccionalidad</div>
           </div>
@@ -808,11 +881,10 @@ GO</code></pre>
               </div>
             </div>
             <div>
-              <div class="img-placeholder mt-0">
-                <i data-lucide="image"></i>
-                <div>[Espacio para Imagen]</div>
-                <span>ALT: Lorem ipsum dolor sit amet</span>
-              </div>
+              <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+           <img src="img/transaccion.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+           <span class="img-caption"></span>
+            </div>
               <div class="info-card mt-3">
                 <div class="card-title text-sm">Verificación Post-Transacción</div>
                 <div class="card-copy text-xs font-mono bg-slate-50 p-2 rounded">
@@ -835,14 +907,13 @@ GO</code></pre>
           <div class="note-box mb-4">
             El proyecto integra los conceptos fundamentales de bases de datos: modelado, consultas, seguridad, integridad y concurrencia. La base de datos <strong>Taller_de_Celulares</strong> es funcional y escalable, y los scripts presentados demuestran su aplicación práctica en un entorno real de taller de reparaciones.
           </div>
-          <div class="img-placeholder">
-            <i data-lucide="image"></i>
-            <div>[Espacio para Imagen]</div>
-            <span>ALT: Lorem ipsum dolor sit amet</span>
-          </div>
+          <div class="img-container" style="display: flex; justify-content: center; margin: 25px 0;">
+           <img src="img/ReporteOrdenes.png" style="max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"/>
+           <span class="img-caption"></span>
+            </div>
         </section>
 
-      </main>
+stockBajo.png
 
       <footer class="footer-progress">
         <div class="progress-head">
